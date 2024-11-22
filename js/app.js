@@ -11,8 +11,13 @@ const audioPausa = new Audio("./sonidos/pause.mp3");
 const audioPlay = new Audio("./sonidos/play.wav");
 const audioBeep = new Audio("./sonidos/beep.mp3");
 const botonIniciarPausa = document.querySelector("#start-pause");
+const textoInciarPausar = document.querySelector("#start-pause span");
+const iconoIniciarPausar = document.querySelector(
+  ".app__card-primary-button img"
+);
+const tiempoEnPantalla = document.querySelector("#timer");
 
-let tiempoTrasncurridoEnSegundos = 5;
+let tiempoTrasncurridoEnSegundos = 1500;
 let idIntervalo = null;
 
 //Eventos
@@ -26,22 +31,26 @@ inputEnfoqueMusica.addEventListener("change", () => {
 });
 
 botonCorto.addEventListener("click", () => {
+  tiempoTrasncurridoEnSegundos = 300;
   cambiarContext("descanso-corto");
   botonCorto.classList.add("active");
 });
 
 botonEnfoque.addEventListener("click", () => {
+  tiempoTrasncurridoEnSegundos = 1500;
   cambiarContext("enfoque");
   botonEnfoque.classList.add("active");
 });
 
 botonLargo.addEventListener("click", () => {
+  tiempoTrasncurridoEnSegundos = 900;
   cambiarContext("descanso-largo");
   botonLargo.classList.add("active");
 });
 
 //Funcion para cambiar el contexto de la interface
 function cambiarContext(contexto) {
+  mostrarTiempo();
   botones.forEach(function (contexto) {
     contexto.classList.remove("active");
   });
@@ -84,7 +93,10 @@ const cuentaRegresiva = () => {
     audioBeep.play();
     return;
   }
+  textoInciarPausar.textContent = "Pausar";
+  iconoIniciarPausar.setAttribute("src", "/imagenes/pause.png");
   tiempoTrasncurridoEnSegundos -= 1;
+  mostrarTiempo();
 };
 
 botonIniciarPausa.addEventListener("click", iniciarPausar);
@@ -101,5 +113,18 @@ function iniciarPausar() {
 
 function reiniciar() {
   clearInterval(idIntervalo);
+  textoInciarPausar.textContent = "Comenzar";
+  iconoIniciarPausar.setAttribute("src", "/imagenes/play_arrow.png");
   idIntervalo = null;
 }
+
+function mostrarTiempo() {
+  const tiempo = new Date(tiempoTrasncurridoEnSegundos * 1000);
+  const tiempoFormatedo = tiempo.toLocaleTimeString("es-MX", {
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  tiempoEnPantalla.innerHTML = `${tiempoFormatedo}`;
+}
+
+mostrarTiempo();
